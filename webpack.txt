@@ -1,0 +1,33 @@
+// webpack.config.js
+const path = require('path');
+
+module.exports = {
+  entry: './src/index.js', // Adjust this to your entry point
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'universal-auth.js', // Change to your preferred output name
+    library: {
+      name: 'authClient', // Change to your library name
+      type: 'umd', // Universal Module Definition
+      export: 'default'
+    },
+    globalObject: 'this'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
+      }
+    ]
+  },
+  optimization: {
+    minimize: true
+  }
+};
