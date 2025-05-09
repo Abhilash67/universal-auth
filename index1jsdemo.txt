@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Auth Example</title>
+  <script src="../01-login/node_modules/universal-sdk/dist/universal-auth.js"></script>
+</head>
+<body>
+  <button id="login-button">Login</button>
+  <button id="logout-button" style="display:none">Logout</button>
+  <div id="profile" style="display:none"></div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Configure Auth0
+      const auth0Config = {
+        domain: 'dev-vfzstbs1dxkuagab.us.auth0.com',
+        clientId: '7jEmLTXy7WvF5gAs1OE9QXIZhQnKfs5R',
+        audience: 'your-audience-uri', // Required for Auth0
+        redirectUri: window.location.origin,
+      };
+      
+      try {
+        // Initialize Auth0 provider
+        const authClient = await UniversalAuth.createAuthProvider('auth0', auth0Config);
+        
+        // Handle login/logout
+        document.getElementById('login-button').addEventListener('click', () => {
+          authClient.login();
+        });
+        
+        document.getElementById('logout-button').addEventListener('click', () => {
+          authClient.logout();
+        });
+        
+        // Check authentication status
+        updateUI();
+        
+        function updateUI() {
+          const isAuthenticated = authClient.isAuthenticated();
+          document.getElementById('login-button').style.display = isAuthenticated ? 'none' : 'block';
+          document.getElementById('logout-button').style.display = isAuthenticated ? 'block' : 'none';
+          document.getElementById('profile').style.display = isAuthenticated ? 'block' : 'none';
+          
+          if (isAuthenticated) {
+            authClient.getUserProfile().then(profile => {
+              document.getElementById('profile').textContent = JSON.stringify(profile, null, 2);
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Authentication error:', error);
+      }
+    });
+  </script>
+</body>
+</html>
