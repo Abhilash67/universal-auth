@@ -1,0 +1,47 @@
+// Abstract authentication provider interface
+export class AuthProvider {
+    constructor(config) {
+      if (this.constructor === AuthProvider) {
+        throw new Error("AuthProvider is an abstract class and cannot be instantiated directly");
+      }
+    }
+  
+    // These methods should be implemented by any concrete provider
+    login() {
+      throw new Error("Method 'login()' must be implemented");
+    }
+  
+    logout() {
+      throw new Error("Method 'logout()' must be implemented");
+    }
+  
+    getUserProfile() {
+      throw new Error("Method 'getUserProfile()' must be implemented");
+    }
+  
+    isAuthenticated() {
+      throw new Error("Method 'isAuthenticated()' must be implemented");
+    }
+  
+    getAccessToken() {
+      throw new Error("Method 'getAccessToken()' must be implemented");
+    }
+  }
+  
+  // Factory function to create the appropriate provider
+  export function createAuthProvider(type, config) {
+    switch (type.toLowerCase()) {
+      case 'auth0':
+        // Dynamically import to avoid loading all providers at once
+        return import('./providers/auth0-provider.js').then(module => {
+          return new module.default(config);
+        });
+      /*case 'okta':
+        return import('./providers/okta-provider.js').then(module => {
+          return new module.default(config);
+        });*/
+      // Add other providers as needed
+      default:
+        throw new Error(`Unsupported authentication provider: ${type}`);
+    }
+  }
